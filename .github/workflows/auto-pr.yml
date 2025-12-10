@@ -1,0 +1,62 @@
+name: Auto PR (develop → main)
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if PR already exists
+        id: check-pr
+        run: |
+          PR_EXISTS=$(gh pr list --base main --head develop --state open --json number --jq 'length')
+          echo "exists=$PR_EXISTS" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR
+        if: steps.check-pr.outputs.exists == '0'
+        run: |
+          gh pr create \
+            --base main \
+            --head develop \
+            --title "🚀 develop → main 동기화" \
+            --body "## 자동 생성된 PR
+
+            develop 브랜치의 변경사항을 main 브랜치에 머지합니다.
+
+            ### 포함된 커밋
+            $(git log main..develop --oneline | head -20)
+
+            ---
+            🤖 이 PR은 자동으로 생성되었습니다"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update existing PR
+        if: steps.check-pr.outputs.exists != '0'
+        run: |
+          PR_NUMBER=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number')
+          gh pr edit $PR_NUMBER \
+            --body "## 자동 생성된 PR (업데이트됨)
+
+            develop 브랜치의 변경사항을 main 브랜치에 머지합니다.
+
+            ### 포함된 커밋
+            $(git log main..develop --oneline | head -20)
+
+            ---
+            🤖 이 PR은 자동으로 생성되었습니다
+            📅 마지막 업데이트: $(date '+%Y-%m-%d %H:%M:%S')"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
