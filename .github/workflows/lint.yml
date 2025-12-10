@@ -1,0 +1,67 @@
+name: Lint Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  eslint:
+    name: ESLint Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run ESLint
+        working-directory: ./frontend
+        run: npm run lint
+        continue-on-error: false
+
+  lint-result:
+    name: Lint Result Comment
+    runs-on: ubuntu-latest
+    needs: eslint
+    if: failure()
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Comment on PR (Lint Failed)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## ❌ ESLint 검사 실패
+
+            코드에 오류가 발견되었습니다. 아래 명령어로 확인하세요:
+
+            \`\`\`bash
+            cd frontend
+            npm run lint
+            \`\`\`
+
+            자동 수정 가능한 오류는 다음 명령어로 수정할 수 있습니다:
+
+            \`\`\`bash
+            npm run lint:fix
+            \`\`\`
+
+            ---
+            🤖 *자동 생성된 메시지입니다*`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
