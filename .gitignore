@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### MCP Server ###
+mcp-server/config/config.json
+mcp-server/node_modules/
+.env
