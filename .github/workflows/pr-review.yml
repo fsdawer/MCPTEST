@@ -16,10 +16,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v41
-
       - name: PR Stats Comment
         uses: actions/github-script@v7
         with:
@@ -49,32 +45,35 @@ jobs:
             });
 
             const fileTypeList = Object.entries(fileTypes)
-              .map(([ext, count]) => `- \`.${ext}\`: ${count}개`)
+              .map(([ext, count]) => `- .${ext}: ${count}개`)
               .join('\n');
+
+            const fileList = files.map(f => {
+              let status = '✏️';
+              if (f.status === 'added') status = '🆕';
+              if (f.status === 'removed') status = '🗑️';
+              return `- ${status} ${f.filename} (+${f.additions}/-${f.deletions})`;
+            }).join('\n');
 
             const body = `## 📊 PR 분석 리포트
 
-            ### 변경 통계
-            | 항목 | 수치 |
-            |------|------|
-            | 📁 변경된 파일 | ${stats.files}개 |
-            | ➕ 추가된 라인 | ${stats.additions}줄 |
-            | ➖ 삭제된 라인 | ${stats.deletions}줄 |
-            | 📝 총 변경 | ${stats.changes}줄 |
+### 변경 통계
+| 항목 | 수치 |
+|------|------|
+| 📁 변경된 파일 | ${stats.files}개 |
+| ➕ 추가된 라인 | ${stats.additions}줄 |
+| ➖ 삭제된 라인 | ${stats.deletions}줄 |
+| 📝 총 변경 | ${stats.changes}줄 |
 
-            ### 파일 타입별 변경
-            ${fileTypeList}
+### 파일 타입별 변경
+${fileTypeList}
 
-            ### 변경된 파일 목록
-            ${files.map(f => {
-              const status = f.status === 'added' ? '🆕' : f.status === 'removed' ? '🗑️' : '✏️';
-              return \`- ${status} \\\`${f.filename}\\\` (+${f.additions}/-${f.deletions})\`;
-            }).join('\n')}
+### 변경된 파일 목록
+${fileList}
 
-            ---
-            🤖 *자동 생성된 리포트입니다*`;
+---
+🤖 *자동 생성된 리포트입니다*`;
 
-            // 기존 코멘트 찾기
             const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -120,33 +119,34 @@ jobs:
             });
 
             const changes = pr.additions + pr.deletions;
-            let sizeLabel = '';
+            let sizeLabel = 'size/XS';
 
-            if (changes < 10) sizeLabel = 'size/XS';
-            else if (changes < 50) sizeLabel = 'size/S';
-            else if (changes < 200) sizeLabel = 'size/M';
-            else if (changes < 500) sizeLabel = 'size/L';
-            else sizeLabel = 'size/XL';
+            if (changes >= 500) sizeLabel = 'size/XL';
+            else if (changes >= 200) sizeLabel = 'size/L';
+            else if (changes >= 50) sizeLabel = 'size/M';
+            else if (changes >= 10) sizeLabel = 'size/S';
 
-            // 기존 size 라벨 제거
-            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number
-            });
+            try {
+              const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+              });
 
-            for (const label of labels) {
-              if (label.name.startsWith('size/')) {
-                await github.rest.issues.removeLabel({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                  name: label.name
-                });
+              for (const label of labels) {
+                if (label.name.startsWith('size/')) {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.issue.number,
+                    name: label.name
+                  });
+                }
               }
+            } catch (e) {
+              console.log('No existing labels to remove');
             }
 
-            // 새 라벨 추가
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
