@@ -1,0 +1,75 @@
+name: 🐛 버그 리포트
+description: 버그를 발견했을 때 사용하세요
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        버그 리포트를 작성해 주셔서 감사합니다! 🙏
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 버그 설명
+      description: 어떤 버그인지 명확하게 설명해주세요
+      placeholder: 버그에 대해 설명해주세요...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 재현 방법
+      description: 버그를 재현하는 단계를 알려주세요
+      placeholder: |
+        1. '...'로 이동
+        2. '...' 클릭
+        3. '...'까지 스크롤
+        4. 에러 발생
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 예상 동작
+      description: 어떻게 동작해야 하는지 설명해주세요
+      placeholder: 정상적으로 동작했다면 어떻게 되어야 했나요?
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 스크린샷
+      description: 가능하다면 스크린샷을 첨부해주세요
+      placeholder: 이미지를 드래그하거나 붙여넣기 하세요
+
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: 브라우저
+      description: 어떤 브라우저에서 발생했나요?
+      multiple: true
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - 기타
+
+  - type: input
+    id: version
+    attributes:
+      label: 버전
+      description: 사용 중인 버전이 있다면 알려주세요
+      placeholder: ex) v1.0.0
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 추가 정보
+      description: 버그에 대한 추가 정보가 있다면 작성해주세요

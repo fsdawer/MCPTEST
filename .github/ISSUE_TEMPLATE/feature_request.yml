@@ -1,0 +1,55 @@
+name: ✨ 기능 요청
+description: 새로운 기능을 제안할 때 사용하세요
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        기능 제안을 해주셔서 감사합니다! 💡
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 문제 상황
+      description: 이 기능이 필요한 이유가 무엇인가요?
+      placeholder: 현재 어떤 불편함이 있는지 설명해주세요...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 제안하는 해결책
+      description: 어떤 기능을 원하시나요?
+      placeholder: 원하는 기능에 대해 설명해주세요...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 대안
+      description: 고려해본 다른 대안이 있나요?
+      placeholder: 다른 방법이 있다면 알려주세요...
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 우선순위
+      description: 이 기능이 얼마나 중요한가요?
+      options:
+        - 🔴 높음 - 꼭 필요함
+        - 🟡 중간 - 있으면 좋음
+        - 🟢 낮음 - 나중에 해도 됨
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 추가 정보
+      description: 참고할 만한 추가 정보가 있다면 작성해주세요
+      placeholder: 스크린샷, 링크, 예시 등...

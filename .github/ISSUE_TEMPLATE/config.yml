@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 질문하기
+    url: https://github.com/fsdawer/MCPTEST/discussions
+    about: 버그나 기능 요청이 아닌 질문은 Discussions를 이용해주세요

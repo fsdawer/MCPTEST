@@ -1,0 +1,52 @@
+# Frontend 관련
+frontend:
+  - changed-files:
+      - any-glob-to-any-file: 'frontend/**/*'
+
+# MCP Server 관련
+mcp-server:
+  - changed-files:
+      - any-glob-to-any-file: 'mcp-server/**/*'
+
+# 설정 파일
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.json'
+          - '**/*.yml'
+          - '**/*.yaml'
+
+# 문서
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - 'docs/**/*'
+
+# JavaScript/TypeScript
+javascript:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.js'
+          - '**/*.ts'
+          - '**/*.jsx'
+          - '**/*.tsx'
+
+# Vue
+vue:
+  - changed-files:
+      - any-glob-to-any-file: '**/*.vue'
+
+# CSS/스타일
+styles:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.css'
+          - '**/*.scss'
+          - '**/*.sass'
+          - '**/*.less'
+
+# CI/CD
+ci-cd:
+  - changed-files:
+      - any-glob-to-any-file: '.github/**/*'
